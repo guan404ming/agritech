@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
+import { CropListProps } from '../type';
 
-interface DataProps {
-    data: {
-        CropName: String;
-        Middle_Price: String;
-        CropCode: String;
-    }[] | undefined
-}
-
-function Rank(props: DataProps) {
-    const { data } = props;
+function Rank({ crops }: CropListProps) {
     const [page, setPage] = useState(1);
 
     return (
@@ -38,13 +30,13 @@ function Rank(props: DataProps) {
                     </thead>
                     <tbody>
                         {
-                            data?.map((e, idx) => (
+                            crops?.map((crop, idx) => (
                                 ((page - 1) * 10 <= idx && idx < page * 10)
                                     ? (
-                                        <tr className="hover">
-                                            <td>{e.CropName}</td>
+                                        <tr className="hover" key={Math.random().toString(16).slice(2)}>
+                                            <td>{crop.CropName}</td>
                                             <td className="text-center"><div className="badge badge-primary">蔬菜</div></td>
-                                            <td className="text-center">{e.Middle_Price}</td>
+                                            <td className="text-center">{crop.Avg_Price}</td>
                                         </tr>
                                     )
                                     : (
