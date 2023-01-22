@@ -1,8 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-function Rank() {
+interface DataProps {
+    data: {
+        CropName: String;
+        Middle_Price: String;
+        CropCode: String;
+    }[] | undefined
+}
+
+function Rank(props: DataProps) {
+    const { data } = props;
+    const [page, setPage] = useState(1);
+
     return (
-        <>
+        <div className="text-center">
             <div className="flex justify-between items-center">
                 <h1 className="font-bold text-lg my-6">今日菜價</h1>
                 <select className="select max-w-xs">
@@ -15,69 +26,41 @@ function Rank() {
                 </select>
             </div>
 
-            <div className="overflow-x-auto shadow-md">
+            <div className="overflow-x-auto shadow-md mb-6">
                 <table className="table w-full text-lg">
 
                     <thead>
                         <tr>
                             <th>名稱</th>
-                            <th className="w-[100px] md:w-[150px]">類別</th>
-                            <th className="w-[100px] md:w-[150px]">價格</th>
+                            <th className="w-[100px] md:w-[125px] text-center">類別</th>
+                            <th className="w-[100px] md:w-[125px] text-center">價格</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr className="hover">
-                            <td>紅豆 - 普通</td>
-                            <td><div className="badge badge-primary">蔬菜</div></td>
-                            <td>112</td>
-                        </tr>
-
-                        <tr className="hover">
-                            <td>紅豆 - 普通</td>
-                            <td><div className="badge badge-primary">蔬菜</div></td>
-                            <td>112</td>
-                        </tr>
-
-                        <tr className="hover">
-                            <td>紅豆 - 普通</td>
-                            <td><div className="badge badge-primary">蔬菜</div></td>
-                            <td>112</td>
-                        </tr>
-
-                        <tr className="hover">
-                            <td>紅豆 - 普通</td>
-                            <td><div className="badge badge-primary">蔬菜</div></td>
-                            <td>112</td>
-                        </tr>
-
-                        <tr className="hover">
-                            <td>紅豆 - 普通</td>
-                            <td><div className="badge badge-primary">蔬菜</div></td>
-                            <td>112</td>
-                        </tr>
-
-                        <tr className="hover">
-                            <td>紅豆 - 普通</td>
-                            <td><div className="badge badge-primary">蔬菜</div></td>
-                            <td>112</td>
-                        </tr>
-
-                        <tr className="hover">
-                            <td>紅豆 - 普通</td>
-                            <td><div className="badge badge-primary">蔬菜</div></td>
-                            <td>112</td>
-                        </tr>
-
-                        <tr className="hover">
-                            <td>紅豆 - 普通</td>
-                            <td><div className="badge badge-primary">蔬菜</div></td>
-                            <td>112</td>
-                        </tr>
-
+                        {
+                            data?.map((e, idx) => (
+                                ((page - 1) * 10 <= idx && idx < page * 10)
+                                    ? (
+                                        <tr className="hover">
+                                            <td>{e.CropName}</td>
+                                            <td className="text-center"><div className="badge badge-primary">蔬菜</div></td>
+                                            <td className="text-center">{e.Middle_Price}</td>
+                                        </tr>
+                                    )
+                                    : (
+                                        ''
+                                    )
+                            ))
+                        }
                     </tbody>
                 </table>
             </div>
-        </>
+            <div className="btn-group mb-20 shadow-md rounded-md">
+                <button className="btn btn-ghost" type="button" onClick={() => setPage((page === 1) ? 1 : page - 1)}>«</button>
+                <button className="btn btn-ghost" type="button">{`Page ${page}`}</button>
+                <button className="btn btn-ghost" type="button" onClick={() => setPage(page + 1)}>»</button>
+            </div>
+        </div>
 
     );
 }
