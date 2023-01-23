@@ -7,4 +7,5 @@ export interface Crop {
     Middle_Price: String;
     Avg_Price: String;
     CropCode: String;
+    MarketName: String;
 }

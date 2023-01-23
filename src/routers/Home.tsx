@@ -5,27 +5,35 @@ import Stats from '../components/Stats';
 import Rank from '../components/Rank';
 import Slide from '../components/Slide';
 import axios from '../api';
+import { Crop } from '../type';
 
 function Home() {
-    const [data, setData] = useState();
+    const [crops, setData] = useState<Crop[]>([]);
     const date = new Date();
-    const formatedDate = `${date.getFullYear() - 1911}.${(date.getMonth() + 1 > 10) ? '' : '0'}${date.getMonth() + 1}.${(date.getDate() > 10) ? '' : '0'}${date.getDate()}`;
+    const formatedDate = `${date.getFullYear() - 1911}.${(date.getMonth() + 1 > 10) ? '' : '0'}${date.getMonth() + 1}.${(date.getDate() > 10) ? '' : '0'}${date.getDate()}`; // eslint-disable-line
 
     useEffect(() => {
-        axios
-            .get('https://data.coa.gov.tw/api/v1/AgriProductsTransType/', {
-                params: {
-                    Start_time: formatedDate,
-                    End_time: formatedDate,
-                    api_key: process.env.REACT_APP_API_KEY,
-                },
-            })
-            .then((res) => {
-                setData(res.data.Data);
-            })
-            .catch((err) => {
-                throw new Error(err);
-            });
+        const fetchData = async (page: number) => {
+            await axios
+                .get('https://data.coa.gov.tw/api/v1/AgriProductsTransType/', {
+                    params: {
+                        Start_time: '112.01.01',
+                        End_time: formatedDate,
+                        Page: page,
+                        api_key: process.env.REACT_APP_API_KEY,
+                    },
+                })
+                .then((res) => {
+                    const newCrops: Crop[] = crops.concat(res.data.Data);
+                    setData(newCrops);
+                })
+                .catch((err) => {
+                    throw new Error(err);
+                });
+        };
+        for (let index = 1; index < 2; index += 1) {
+            fetchData(index);
+        }
     }, []);
 
     return (
@@ -35,7 +43,7 @@ function Home() {
 
                 <Stats />
                 <Slide />
-                <Rank data={data} />
+                <Rank crops={crops} />
 
             </div>
             <Footer />
