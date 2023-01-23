@@ -15,13 +15,12 @@
         "project": "./tsconfig.json"
     },
     "plugins": [
-        "react"
+        "react",
+        "jsx-a11y",
+        "import"
     ],
     "rules": {
-        "indent": [
-            "error",
-            4
-        ],
+        "indent": "off",
         "react/jsx-indent": [
             "error",
             4

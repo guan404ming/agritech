@@ -1,10 +1,14 @@
-export interface CropListProps {
+export interface RankProps {
     crops: Crop[]
+}
+
+export interface HeaderProps {
+    setMarketName: React.Dispatch<React.SetStateAction<string>>,
+    marketName: string
 }
 
 export interface Crop {
     CropName: String;
-    Middle_Price: String;
     Avg_Price: String;
     CropCode: String;
     MarketName: String;

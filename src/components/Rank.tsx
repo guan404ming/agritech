@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Crop, CropListProps } from '../type';
+import { Crop, RankProps } from '../type';
 
-function Rank({ crops }: CropListProps) {
+function Rank({ crops }: RankProps) {
     const [page, setPage] = useState(1);
     const [filter, setFilter] = useState('all');
     const [filteredCrops, setFilteredCrop] = useState<Crop[]>(crops);
@@ -37,7 +37,7 @@ function Rank({ crops }: CropListProps) {
     useEffect(() => {
         setPage(1);
         handleFilterCrops();
-    }, [filter]);
+    }, [filter, crops]);
 
     return (
         <div className="text-center">
@@ -68,7 +68,7 @@ function Rank({ crops }: CropListProps) {
                     </thead>
                     <tbody>
                         {
-                            ((filteredCrops.length === 0) ? crops : filteredCrops)
+                            (filteredCrops)
                                 ?.map((crop, idx) => (((page - 1) * 10 <= idx && idx < page * 10)
                                     ? (
                                         <tr className="hover" key={Math.random().toString(16).slice(2)}>
