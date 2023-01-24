@@ -5,17 +5,30 @@ import Stat from '../components/Stat';
 import Rank from '../components/Rank';
 import Slide from '../components/Slide';
 import axios from '../api';
-import { Crop, Stats } from '../type';
+import { Crop, Stats, PriceVariation } from '../type';
 
 function Home() {
     const [marketName, setMarketName] = useState<string>('台北二');
     const [crops, setCrops] = useState<Crop[]>([]);
-    const [stats, setStats] = useState<Stats>(
-        { income: 0, quantity: 0 },
-    );
-    const date = new Date();
-    const formatedDate = `${date.getFullYear() - 1911}.${(date.getMonth() + 1 > 10) ? '' : '0'}${date.getMonth() + 1}.${(date.getDate() > 10) ? '' : '0'}${date.getDate()}`; // eslint-disable-line
+    const [prevCrops, setPrevCrops] = useState<Crop[]>([]); //eslint-disable-line
+    const [stats, setStats] = useState<Stats>({ income: 0, quantity: 0 });
+    const [priceVariationList, setPriceVariationList] = useState<PriceVariation[]>([]);
 
+    // Date
+    const curDate = new Date();
+    curDate.setDate(curDate.getDate() - 7);
+    const prevDate = new Date();
+    prevDate.setDate(curDate.getDate() - 10);
+
+    const handleFormatDate = (date: Date) => (
+        [
+            date.getFullYear() - 1911,
+            (date.getMonth() + 1).toString().padStart(2, '0'),
+            (date.getDate()).toString().padStart(2, '0'),
+        ].join('.')
+    );
+
+    // Stat
     const getStats = (curCrops: Crop[]) => {
         let income = 0;
         let quantity = 0;
@@ -27,38 +40,67 @@ function Home() {
         setStats({ income, quantity });
     };
 
-    useEffect(() => {
-        const fetchData = async (page: number) => {
-            await axios
-                .get('https://data.coa.gov.tw/api/v1/AgriProductsTransType/', {
-                    params: {
-                        Start_time: '112.01.01',
-                        End_time: formatedDate,
-                        MarketName: marketName,
-                        Page: page,
-                        api_key: process.env.REACT_APP_API_KEY,
-                    },
-                })
-                .then((res) => {
-                    // const newCrops: Crop[] = crops.concat(res.data.Data);
+    // Data
+    const handleFetchData = async (page: number, start: Date, end: Date, isCur: boolean) => {
+        await axios
+            .get('https://data.coa.gov.tw/api/v1/AgriProductsTransType/', {
+                params: {
+                    Start_time: handleFormatDate(start),
+                    End_time: handleFormatDate(end),
+                    MarketName: marketName,
+                    Page: page,
+                    api_key: process.env.REACT_APP_API_KEY,
+                },
+            })
+            .then((res) => {
+                // const newCrops: Crop[] = crops.concat(res.data.Data);
+                if (isCur) {
                     setCrops(res.data.Data);
                     getStats(res.data.Data);
-                })
-                .catch((err) => {
-                    throw new Error(err);
-                });
-        };
+                } else {
+                    setPrevCrops(res.data.Data);
+                }
+            })
+            .catch((err) => {
+                throw new Error(err);
+            });
+    };
+
+    const handleCompareData = () => {
+        const curPriceVariationList: PriceVariation[] = [];
+        crops.forEach((crop) => {
+            const prev = prevCrops.find((prevcrop) => prevcrop.CropCode === crop.CropCode);
+            if (prev) {
+                const difference = (Number(crop.Avg_Price) - Number(prev.Avg_Price));
+                const priceVariation = (Number(crop.Avg_Price) !== Number(prev.Avg_Price))
+                    ? Math.round((difference / Number(prev.Avg_Price)) * 100) / 100
+                    : 0;
+                curPriceVariationList.push({ crop, priceVariation });
+            }
+        });
+        curPriceVariationList.sort((a, b) => (
+            (Math.abs(a.priceVariation) > Math.abs(b.priceVariation)) ? -1 : 1
+        ));
+        setPriceVariationList(curPriceVariationList);
+    };
+
+    useEffect(() => {
         for (let index = 1; index < 2; index += 1) {
-            fetchData(index);
+            handleFetchData(index, curDate, curDate, true);
+            handleFetchData(index, prevDate, prevDate, false);
         }
     }, [marketName]);
+
+    useEffect(() => {
+        handleCompareData();
+    }, [prevCrops]);
 
     return (
         <div className="max-w-[1400px] mx-auto overflow-y-scroll">
             <Header setMarketName={setMarketName} marketName={marketName} />
             <div className="mx-6">
                 <Stat stats={stats} />
-                <Slide />
+                <Slide priceVariationList={priceVariationList} />
                 <Rank crops={crops} />
             </div>
             <Footer />
