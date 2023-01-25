@@ -1,14 +1,23 @@
 import React from 'react';
 import { SlideProps } from '../type';
 
-function Slide({ priceVariationList }: SlideProps) {
+function Slide({ priceVariationList, setSelectedCrop }: SlideProps) {
     return (
         <>
             <h1 className="font-bold text-lg my-6">今日漲跌最大</h1>
             <div className="carousel w-full h-1/20 space-x-4 pb-4">
                 {
-                    priceVariationList.map((priceVariation) => (
-                        <div id="slide1" className="carousel-item w-1/3 md:w-1/3 lg:w-1/5 min-w-[200px]" key={Math.random().toString(16).slice(2)}>
+                    priceVariationList.slice(0, 10).map((priceVariation, idx) => (
+                        <label
+                            id={`slide${idx}`}
+                            className="carousel-item w-1/3 md:w-1/3 lg:w-1/5 min-w-[175px] cursor-pointer"
+                            key={Math.random().toString(16).slice(2)}
+                            htmlFor=""
+                            onClick={() => {
+                                setSelectedCrop(priceVariation.crop);
+                                document.getElementById('info-modal-box')?.classList.add('modal-open');
+                            }}
+                        >
                             <div className="stats shadow-lg relative w-full">
                                 {
                                     (priceVariation.priceVariation > 0)
@@ -28,9 +37,8 @@ function Slide({ priceVariationList }: SlideProps) {
                                     <div className="stat-value my-1 text-2xl">{`${priceVariation.priceVariation} %`}</div>
                                     <div className="stat-desc">{priceVariation.crop.TransDate}</div>
                                 </div>
-
                             </div>
-                        </div>
+                        </label>
                     ))
                 }
             </div>

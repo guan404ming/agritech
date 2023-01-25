@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Crop, RankProps } from '../type';
 
-function Rank({ crops }: RankProps) {
+function Rank({ crops, setSelectedCrop }: RankProps) {
     const [page, setPage] = useState(1);
     const [filter, setFilter] = useState('all');
     const [filteredCrops, setFilteredCrop] = useState<Crop[]>(crops);
@@ -57,12 +57,10 @@ function Rank({ crops }: RankProps) {
 
             <div className="overflow-x-auto shadow-md mb-6">
                 <table className="table w-full text-lg">
-
                     <thead>
                         <tr>
                             <th>名稱</th>
                             <th className="w-[100px] md:w-[125px] text-center">類別</th>
-                            <th className="w-[100px] md:w-[125px] text-center">市場</th>
                             <th className="w-[100px] md:w-[125px] text-center">價格</th>
                         </tr>
                     </thead>
@@ -71,12 +69,19 @@ function Rank({ crops }: RankProps) {
                             (filteredCrops)
                                 ?.map((crop, idx) => (((page - 1) * 10 <= idx && idx < page * 10)
                                     ? (
-                                        <tr className="hover" key={Math.random().toString(16).slice(2)}>
+                                        <tr
+                                            className="hover cursor-pointer"
+                                            key={Math.random().toString(16).slice(2)}
+                                            onClick={() => {
+                                                setSelectedCrop(crop);
+                                                document.getElementById('info-modal-box')?.classList.add('modal-open');
+                                            }}
+                                        >
                                             <td>{crop.CropName}</td>
                                             <td className="text-center"><div className="badge badge-primary">{crop.CropCode}</div></td>
-                                            <td className="text-center"><div className="badge badge-secondary">{crop.MarketName}</div></td>
                                             <td className="text-center">{crop.Avg_Price}</td>
                                         </tr>
+
                                     )
                                     : (
                                         ''

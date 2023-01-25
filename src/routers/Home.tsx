@@ -4,12 +4,14 @@ import Footer from '../components/Footer';
 import Stat from '../components/Stat';
 import Rank from '../components/Rank';
 import Slide from '../components/Slide';
+import Modal from '../components/Modal';
 import axios from '../api';
 import { Crop, Stats, PriceVariation } from '../type';
 
 function Home() {
     const [marketName, setMarketName] = useState<string>('台北二');
     const [crops, setCrops] = useState<Crop[]>([]);
+    const [selectedCrop, setSelectedCrop] = useState<Crop>();
     const [prevCrops, setPrevCrops] = useState<Crop[]>([]); //eslint-disable-line
     const [stats, setStats] = useState<Stats>({ income: 0, quantity: 0 });
     const [priceVariationList, setPriceVariationList] = useState<PriceVariation[]>([]);
@@ -93,15 +95,16 @@ function Home() {
 
     useEffect(() => {
         handleCompareData();
-    }, [prevCrops]);
+    }, [marketName, crops, prevCrops]);
 
     return (
         <div className="max-w-[1400px] mx-auto overflow-y-scroll">
             <Header setMarketName={setMarketName} marketName={marketName} />
+            <Modal crop={selectedCrop} />
             <div className="mx-6">
                 <Stat stats={stats} />
-                <Slide priceVariationList={priceVariationList} />
-                <Rank crops={crops} />
+                <Slide priceVariationList={priceVariationList} setSelectedCrop={setSelectedCrop} />
+                <Rank crops={crops} setSelectedCrop={setSelectedCrop} />
             </div>
             <Footer />
         </div>
