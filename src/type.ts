@@ -1,5 +1,8 @@
+// Props
+
 export interface RankProps {
-    crops: Crop[]
+    crops: Crop[];
+    setSelectedCrop: React.Dispatch<React.SetStateAction<Crop | undefined>>;
 }
 
 export interface HeaderProps {
@@ -13,7 +16,14 @@ export interface StatProps {
 
 export interface SlideProps {
     priceVariationList: PriceVariation[];
+    setSelectedCrop: React.Dispatch<React.SetStateAction<Crop | undefined>>
 }
+
+export interface ModalProps {
+    crop: Crop | undefined;
+}
+
+// Object
 
 export interface Crop {
     CropName: String;
@@ -22,6 +32,9 @@ export interface Crop {
     MarketName: String;
     Trans_Quantity: number;
     TransDate: String;
+    Upper_Price: number,
+    Middle_Price: number,
+    Lower_Price: number
 }
 
 export interface Stats {
@@ -32,4 +45,9 @@ export interface Stats {
 export interface PriceVariation {
     crop: Crop;
     priceVariation: number;
+}
+
+export interface ThemeContextInterface {
+    theme: String;
+    setTheme: React.Dispatch<React.SetStateAction<String>>;
 }
