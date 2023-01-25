@@ -27,11 +27,11 @@ export interface ModalProps {
 
 export interface Crop {
     CropName: String;
-    Avg_Price: String;
     CropCode: String;
     MarketName: String;
     Trans_Quantity: number;
     TransDate: String;
+    Avg_Price: number;
     Upper_Price: number,
     Middle_Price: number,
     Lower_Price: number
@@ -51,3 +51,9 @@ export interface ThemeContextInterface {
     theme: String;
     setTheme: React.Dispatch<React.SetStateAction<String>>;
 }
+
+const formatter = new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 1,
+    minimumFractionDigits: 1,
+});
+export { formatter };

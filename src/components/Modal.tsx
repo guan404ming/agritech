@@ -1,7 +1,9 @@
 import React from 'react';
-import { ModalProps } from '../type';
+import { ModalProps, formatter } from '../type';
 
 function Modal({ crop }: ModalProps) {
+    const income: number = Number(crop?.Avg_Price) * Number(crop?.Trans_Quantity);
+    const quantity: number = Number(crop?.Trans_Quantity);
     return (
         <>
             <input
@@ -18,7 +20,7 @@ function Modal({ crop }: ModalProps) {
                 }}
             >
                 <label className="modal-box px-0" htmlFor="">
-                    <div className="space-x-3 mb-6 text-center">
+                    <div className="space-x-3 mb-2 md:mb-3 text-center">
                         <span className="font-bold text-lg">{crop?.CropName}</span>
                         <div className="badge badge-primary">{crop?.CropCode}</div>
                         <div className="badge badge-secondary">{crop?.MarketName}</div>
@@ -27,25 +29,36 @@ function Modal({ crop }: ModalProps) {
                     <div className="grid grid-cols-2 md:grid-cols-3 mx-6 gap-2 mb-2">
                         <div className="stats shadow-lg">
                             <div className="stat text-md place-items-center">
-                                <div className="stat-title">總量</div>
-                                <div className="stat-value my-1 text-xl">{String(Number(crop?.Avg_Price) * Number(crop?.Trans_Quantity))}</div>
-                                <div className="stat-desc">單位：公噸</div>
+                                <div className="stat-title">交易量</div>
+                                <div className="stat-value my-1 text-xl">
+                                    {formatter.format((quantity > 10000)
+                                        ? quantity / 1000
+                                        : quantity)}
+                                </div>
+                                <div className="stat-desc">
+                                    {`${(quantity > 10000) ? '公噸' : '公斤'}`}
+                                </div>
                             </div>
                         </div>
 
                         <div className="stats shadow-lg">
                             <div className="stat text-md place-items-center">
-                                <div className="stat-title">總額</div>
-                                <div className="stat-value my-1 text-xl">{String(crop?.Trans_Quantity)}</div>
-                                <div className="stat-desc">單位：萬</div>
+                                <div className="stat-title">平均價格</div>
+                                <div className="stat-value my-1 text-xl">{formatter.format(Number(crop?.Avg_Price))}</div>
+                                <div className="stat-desc">元 / 公斤</div>
                             </div>
+
                         </div>
 
-                        <div className="stats shadow-lg hidden lg:block text-center">
+                        <div className="stats shadow-lg hidden lg:block">
                             <div className="stat text-md place-items-center">
-                                <div className="stat-title">均價</div>
-                                <div className="stat-value my-1 text-xl">{crop?.Avg_Price}</div>
-                                <div className="stat-desc">單位：元</div>
+                                <div className="stat-title">交易總額</div>
+                                <div className="stat-value my-1 text-xl">
+                                    {formatter.format((income > 100000) ? income / 10000 : income)}
+                                </div>
+                                <div className="stat-desc">
+                                    {`${(income > 100000) ? '萬元' : '元'}`}
+                                </div>
                             </div>
                         </div>
 
@@ -54,24 +67,24 @@ function Modal({ crop }: ModalProps) {
                         <div className="stats shadow-lg">
                             <div className="stat text-md place-items-center">
                                 <div className="stat-title">上價</div>
-                                <div className="stat-value my-1 text-xl">{crop?.Upper_Price}</div>
-                                <div className="stat-desc">單位：元</div>
+                                <div className="stat-value my-1 text-xl">{formatter.format(Number(crop?.Upper_Price))}</div>
+                                <div className="stat-desc">元 / 公斤</div>
+                            </div>
+                        </div>
+
+                        <div className="stats shadow-lg hidden lg:block">
+                            <div className="stat text-md place-items-center">
+                                <div className="stat-title">中價</div>
+                                <div className="stat-value my-1 text-xl">{formatter.format(Number(crop?.Middle_Price))}</div>
+                                <div className="stat-desc">元 / 公斤</div>
                             </div>
                         </div>
 
                         <div className="stats shadow-lg">
                             <div className="stat text-md place-items-center">
-                                <div className="stat-title">中價</div>
-                                <div className="stat-value my-1 text-xl">{crop?.Middle_Price}</div>
-                                <div className="stat-desc">單位：元</div>
-                            </div>
-                        </div>
-
-                        <div className="stats shadow-lg hidden lg:block text-center">
-                            <div className="stat text-md">
                                 <div className="stat-title">下價</div>
-                                <div className="stat-value my-1 text-xl">{crop?.Lower_Price}</div>
-                                <div className="stat-desc">單位：元</div>
+                                <div className="stat-value my-1 text-xl">{formatter.format(Number(crop?.Lower_Price))}</div>
+                                <div className="stat-desc">元 / 公斤</div>
                             </div>
                         </div>
                     </div>
@@ -86,23 +99,23 @@ function Modal({ crop }: ModalProps) {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr className="hover" key={Math.random().toString(16).slice(2)}>
-                                    <td>01 / 18</td>
+                                <tr className="" key={Math.random().toString(16).slice(2)}>
+                                    <td>今日</td>
                                     <td className="text-center">12</td>
                                     <td className="text-center">12</td>
                                 </tr>
-                                <tr className="hover" key={Math.random().toString(16).slice(2)}>
-                                    <td>01 / 11</td>
+                                <tr className="" key={Math.random().toString(16).slice(2)}>
+                                    <td>週平均</td>
                                     <td className="text-center">12</td>
                                     <td className="text-center">12</td>
                                 </tr>
-                                <tr className="hover" key={Math.random().toString(16).slice(2)}>
-                                    <td>01 / 04</td>
+                                <tr className="" key={Math.random().toString(16).slice(2)}>
+                                    <td>月平均</td>
                                     <td className="text-center">12</td>
                                     <td className="text-center">12</td>
                                 </tr>
-                                <tr className="hover" key={Math.random().toString(16).slice(2)}>
-                                    <td>12 / 28</td>
+                                <tr className="" key={Math.random().toString(16).slice(2)}>
+                                    <td>年平均</td>
                                     <td className="text-center">12</td>
                                     <td className="text-center">12</td>
                                 </tr>
