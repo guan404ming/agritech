@@ -6,21 +6,29 @@ import Rank from '../components/Rank';
 import Slide from '../components/Slide';
 import Modal from '../components/Modal';
 import axios from '../api';
-import { Crop, Stats, PriceVariation } from '../type';
+import {
+    Crop,
+    Stats,
+    PriceVariation,
+    SelectedCropData,
+} from '../type';
 
 function Home() {
     const [marketName, setMarketName] = useState<string>('台北二');
     const [crops, setCrops] = useState<Crop[]>([]);
     const [selectedCrop, setSelectedCrop] = useState<Crop>();
+    const [selectedCropData, setSelectedCropData] = useState<SelectedCropData>(
+        { week: 1, month: 2, season: 3 },
+    );
     const [prevCrops, setPrevCrops] = useState<Crop[]>([]); //eslint-disable-line
     const [stats, setStats] = useState<Stats>({ income: 0, quantity: 0 });
     const [priceVariationList, setPriceVariationList] = useState<PriceVariation[]>([]);
 
     // Date
     const curDate = new Date();
-    curDate.setDate(curDate.getDate() - 7);
+    curDate.setDate(curDate.getDate() - 3);
     const prevDate = new Date();
-    prevDate.setDate(curDate.getDate() - 10);
+    prevDate.setDate(curDate.getDate() - 4);
 
     const handleFormatDate = (date: Date) => (
         [
@@ -97,10 +105,66 @@ function Home() {
         handleCompareData();
     }, [marketName, crops, prevCrops]);
 
+    const handleFetchCropData = (
+        start: Date,
+        end: Date,
+        crop: Crop | undefined,
+    ) => {
+        const pre = new Date();
+        const durations = [7, 30, 60];
+        durations.forEach(async (duration) => {
+            pre.setDate(curDate.getDate() - duration);
+            await axios
+                .get('https://data.coa.gov.tw/api/v1/AgriProductsTransType/', {
+                    params: {
+                        Start_time: handleFormatDate(pre),
+                        End_time: handleFormatDate(end),
+                        CropCode: crop?.CropCode,
+                        MarketName: marketName,
+                    },
+                })
+                .then((res) => {
+                    let sum = 0;
+                    (res.data.Data).forEach((data: Crop) => {
+                        sum += data.Avg_Price;
+                    });
+                    const curData = selectedCropData;
+
+                    switch (duration) {
+                        case 7:
+                            curData.week = sum / res.data.Data.length;
+                            setSelectedCropData(curData);
+                            break;
+
+                        case 30:
+                            curData.month = sum / res.data.Data.length;
+                            setSelectedCropData(curData);
+                            break;
+
+                        case 60:
+                            curData.season = sum / res.data.Data.length;
+                            setSelectedCropData(curData);
+                            break;
+
+                        default:
+                            break;
+                    }
+                })
+                .catch((err) => {
+                    throw new Error(err);
+                });
+        });
+    };
+
+    useEffect(() => {
+        handleFetchCropData(curDate, curDate, selectedCrop);
+    }, [selectedCrop]);
+
     return (
         <div className="max-w-[1400px] mx-auto overflow-y-scroll">
+            {selectedCropData.month}
             <Header setMarketName={setMarketName} marketName={marketName} />
-            <Modal crop={selectedCrop} />
+            <Modal crop={selectedCrop} prices={selectedCropData} />
             <div className="mx-6">
                 <Stat stats={stats} />
                 <Slide priceVariationList={priceVariationList} setSelectedCrop={setSelectedCrop} />

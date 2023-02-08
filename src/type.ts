@@ -21,6 +21,7 @@ export interface SlideProps {
 
 export interface ModalProps {
     crop: Crop | undefined;
+    prices: SelectedCropData | undefined
 }
 
 // Object
@@ -50,6 +51,12 @@ export interface PriceVariation {
 export interface ThemeContextInterface {
     theme: String;
     setTheme: React.Dispatch<React.SetStateAction<String>>;
+}
+
+export interface SelectedCropData {
+    week: number;
+    month: number;
+    season: number;
 }
 
 const formatter = new Intl.NumberFormat('en-US', {

@@ -20,6 +20,8 @@ function Modal({ crop }: ModalProps) {
                 }}
             >
                 <label className="modal-box px-0" htmlFor="">
+                    <label className="btn btn-sm btn-ghost absolute right-2 top-2">✕</label>
+
                     <div className="space-x-3 mb-2 md:mb-3 text-center">
                         <span className="font-bold text-lg">{crop?.CropName}</span>
                         <div className="badge badge-primary">{crop?.CropCode}</div>
@@ -115,7 +117,7 @@ function Modal({ crop }: ModalProps) {
                                     <td className="text-center">12</td>
                                 </tr>
                                 <tr className="" key={Math.random().toString(16).slice(2)}>
-                                    <td>年平均</td>
+                                    <td>季平均</td>
                                     <td className="text-center">12</td>
                                     <td className="text-center">12</td>
                                 </tr>
