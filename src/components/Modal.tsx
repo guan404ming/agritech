@@ -1,9 +1,10 @@
 import React from 'react';
 import { ModalProps, formatter } from '../type';
 
-function Modal({ crop }: ModalProps) {
+function Modal({ crop, prices }: ModalProps) {
     const income: number = Number(crop?.Avg_Price) * Number(crop?.Trans_Quantity);
     const quantity: number = Number(crop?.Trans_Quantity);
+
     return (
         <>
             <input
@@ -104,22 +105,22 @@ function Modal({ crop }: ModalProps) {
                                 <tr className="" key={Math.random().toString(16).slice(2)}>
                                     <td>今日</td>
                                     <td className="text-center">12</td>
-                                    <td className="text-center">12</td>
+                                    <td className="text-center">{formatter.format(Number(crop?.Avg_Price))}</td>
                                 </tr>
                                 <tr className="" key={Math.random().toString(16).slice(2)}>
                                     <td>週平均</td>
                                     <td className="text-center">12</td>
-                                    <td className="text-center">12</td>
+                                    <td className="text-center">{formatter.format(Number(prices?.week))}</td>
                                 </tr>
                                 <tr className="" key={Math.random().toString(16).slice(2)}>
                                     <td>月平均</td>
                                     <td className="text-center">12</td>
-                                    <td className="text-center">12</td>
+                                    <td className="text-center">{formatter.format(Number(prices?.month))}</td>
                                 </tr>
                                 <tr className="" key={Math.random().toString(16).slice(2)}>
                                     <td>季平均</td>
                                     <td className="text-center">12</td>
-                                    <td className="text-center">12</td>
+                                    <td className="text-center">{formatter.format(Number(prices?.season))}</td>
                                 </tr>
                             </tbody>
                         </table>

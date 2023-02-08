@@ -105,14 +105,14 @@ function Home() {
         handleCompareData();
     }, [marketName, crops, prevCrops]);
 
-    const handleFetchCropData = (
+    const handleFetchCropData = async (
         start: Date,
         end: Date,
         crop: Crop | undefined,
     ) => {
         const pre = new Date();
         const durations = [7, 30, 60];
-        durations.forEach(async (duration) => {
+        await durations.forEach(async (duration) => {
             pre.setDate(curDate.getDate() - duration);
             await axios
                 .get('https://data.coa.gov.tw/api/v1/AgriProductsTransType/', {
@@ -157,12 +157,13 @@ function Home() {
     };
 
     useEffect(() => {
-        handleFetchCropData(curDate, curDate, selectedCrop);
+        if (selectedCrop !== undefined) {
+            handleFetchCropData(curDate, curDate, selectedCrop);
+        }
     }, [selectedCrop]);
 
     return (
         <div className="max-w-[1400px] mx-auto overflow-y-scroll">
-            {selectedCropData.month}
             <Header setMarketName={setMarketName} marketName={marketName} />
             <Modal crop={selectedCrop} prices={selectedCropData} />
             <div className="mx-6">
