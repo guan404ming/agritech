@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import Stat from '../components/Stat';
 import Rank from '../components/Rank';
 import Slide from '../components/Slide';
@@ -186,7 +185,6 @@ function Home() {
                 <Slide priceVariations={priceVariations} setSelectedCrop={setSelectedCrop} />
                 <Rank crops={crops} setSelectedCrop={setSelectedCrop} />
             </div>
-            <Footer />
         </div>
     );
 }

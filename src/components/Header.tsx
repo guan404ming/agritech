@@ -8,7 +8,7 @@ const markets: string[] = [
 ];
 
 function Header({ setMarketName, marketName }: HeaderProps) {
-    const { theme, setTheme } = useContext(ThemeContext); // eslint-disable-line
+    const { setTheme } = useContext(ThemeContext);
     const handleChangeTheme = (isLight: boolean) => {
         if (!isLight) {
             setTheme('dark');
