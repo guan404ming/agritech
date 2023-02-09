@@ -1,7 +1,7 @@
 import React from 'react';
 import { ModalProps, formatter } from '../type';
 
-function Modal({ crop, prices }: ModalProps) {
+function Modal({ crop, selectedCropData }: ModalProps) {
     const income: number = Number(crop?.Avg_Price) * Number(crop?.Trans_Quantity);
     const quantity: number = Number(crop?.Trans_Quantity);
 
@@ -104,23 +104,23 @@ function Modal({ crop, prices }: ModalProps) {
                             <tbody>
                                 <tr className="" key={Math.random().toString(16).slice(2)}>
                                     <td>今日</td>
-                                    <td className="text-center">12</td>
+                                    <td className="text-center">{formatter.format(Number(crop?.Trans_Quantity) / 1000)}</td>
                                     <td className="text-center">{formatter.format(Number(crop?.Avg_Price))}</td>
                                 </tr>
                                 <tr className="" key={Math.random().toString(16).slice(2)}>
                                     <td>週平均</td>
-                                    <td className="text-center">12</td>
-                                    <td className="text-center">{formatter.format(Number(prices?.week))}</td>
+                                    <td className="text-center">{formatter.format(Number(selectedCropData?.week.quantity) / 1000)}</td>
+                                    <td className="text-center">{formatter.format(Number(selectedCropData?.week.price))}</td>
                                 </tr>
                                 <tr className="" key={Math.random().toString(16).slice(2)}>
                                     <td>月平均</td>
-                                    <td className="text-center">12</td>
-                                    <td className="text-center">{formatter.format(Number(prices?.month))}</td>
+                                    <td className="text-center">{formatter.format(Number(selectedCropData?.month.quantity) / 1000)}</td>
+                                    <td className="text-center">{formatter.format(Number(selectedCropData?.month.price))}</td>
                                 </tr>
                                 <tr className="" key={Math.random().toString(16).slice(2)}>
                                     <td>季平均</td>
-                                    <td className="text-center">12</td>
-                                    <td className="text-center">{formatter.format(Number(prices?.season))}</td>
+                                    <td className="text-center">{formatter.format(Number(selectedCropData?.season.quantity) / 1000)}</td>
+                                    <td className="text-center">{formatter.format(Number(selectedCropData?.season.price))}</td>
                                 </tr>
                             </tbody>
                         </table>

@@ -10,18 +10,18 @@ export interface HeaderProps {
     marketName: string
 }
 
+export interface SlideProps {
+    priceVariations: PriceVariation[];
+    setSelectedCrop: React.Dispatch<React.SetStateAction<Crop | undefined>>
+}
+
 export interface StatProps {
     stats: Stats;
 }
 
-export interface SlideProps {
-    priceVariationList: PriceVariation[];
-    setSelectedCrop: React.Dispatch<React.SetStateAction<Crop | undefined>>
-}
-
 export interface ModalProps {
     crop: Crop | undefined;
-    prices: SelectedCropData | undefined
+    selectedCropData: SelectedCropData | undefined
 }
 
 // Object
@@ -54,11 +54,21 @@ export interface ThemeContextInterface {
 }
 
 export interface SelectedCropData {
-    week: number;
-    month: number;
-    season: number;
+    week: {
+        price: number;
+        quantity: number;
+    };
+    month: {
+        price: number;
+        quantity: number;
+    };
+    season: {
+        price: number;
+        quantity: number;
+    };
 }
 
+// formatter
 const formatter = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 1,
     minimumFractionDigits: 1,

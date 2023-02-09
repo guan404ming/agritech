@@ -1,13 +1,13 @@
 import React from 'react';
 import { SlideProps } from '../type';
 
-function Slide({ priceVariationList, setSelectedCrop }: SlideProps) {
+function Slide({ priceVariations, setSelectedCrop }: SlideProps) {
     return (
         <>
             <h1 className="font-bold text-lg my-6">今日漲跌最大</h1>
             <div className="carousel w-full h-1/20 space-x-4 pb-4">
                 {
-                    priceVariationList.slice(0, 10).map((priceVariation, idx) => (
+                    priceVariations.slice(0, 10).map((priceVariation, idx) => (
                         <label
                             id={`slide${idx}`}
                             className="carousel-item w-1/3 md:w-1/3 lg:w-1/5 min-w-[175px] cursor-pointer"

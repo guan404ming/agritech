@@ -17,18 +17,29 @@ function Home() {
     const [marketName, setMarketName] = useState<string>('台北二');
     const [crops, setCrops] = useState<Crop[]>([]);
     const [selectedCrop, setSelectedCrop] = useState<Crop>();
-    const [selectedCropData, setSelectedCropData] = useState<SelectedCropData>(
-        { week: 1, month: 2, season: 3 },
-    );
+    const [selectedCropData, setSelectedCropData] = useState<SelectedCropData>({
+        week: {
+            price: 0,
+            quantity: 0,
+        },
+        month: {
+            price: 0,
+            quantity: 0,
+        },
+        season: {
+            price: 0,
+            quantity: 0,
+        },
+    });
     const [prevCrops, setPrevCrops] = useState<Crop[]>([]); //eslint-disable-line
     const [stats, setStats] = useState<Stats>({ income: 0, quantity: 0 });
-    const [priceVariationList, setPriceVariationList] = useState<PriceVariation[]>([]);
+    const [priceVariations, setPriceVariations] = useState<PriceVariation[]>([]);
 
     // Date
     const curDate = new Date();
-    curDate.setDate(curDate.getDate() - 3);
+    curDate.setDate(curDate.getDate() - 4);
     const prevDate = new Date();
-    prevDate.setDate(curDate.getDate() - 4);
+    prevDate.setDate(curDate.getDate() - 5);
 
     const handleFormatDate = (date: Date) => (
         [
@@ -91,7 +102,7 @@ function Home() {
         curPriceVariationList.sort((a, b) => (
             (Math.abs(a.priceVariation) > Math.abs(b.priceVariation)) ? -1 : 1
         ));
-        setPriceVariationList(curPriceVariationList);
+        setPriceVariations(curPriceVariationList);
     };
 
     useEffect(() => {
@@ -110,9 +121,10 @@ function Home() {
         end: Date,
         crop: Crop | undefined,
     ) => {
-        const pre = new Date();
         const durations = [7, 30, 60];
+        const curData = selectedCropData;
         await durations.forEach(async (duration) => {
+            const pre = new Date();
             pre.setDate(curDate.getDate() - duration);
             await axios
                 .get('https://data.coa.gov.tw/api/v1/AgriProductsTransType/', {
@@ -124,31 +136,34 @@ function Home() {
                     },
                 })
                 .then((res) => {
-                    let sum = 0;
+                    let priceSum = 0;
+                    let quantitySum = 0;
+
                     (res.data.Data).forEach((data: Crop) => {
-                        sum += data.Avg_Price;
+                        priceSum += data.Avg_Price;
+                        quantitySum += data.Trans_Quantity;
                     });
-                    const curData = selectedCropData;
 
                     switch (duration) {
                         case 7:
-                            curData.week = sum / res.data.Data.length;
-                            setSelectedCropData(curData);
+                            curData.week.price = priceSum / res.data.Data.length;
+                            curData.week.quantity = quantitySum / res.data.Data.length;
                             break;
 
                         case 30:
-                            curData.month = sum / res.data.Data.length;
-                            setSelectedCropData(curData);
+                            curData.month.price = priceSum / res.data.Data.length;
+                            curData.month.quantity = quantitySum / res.data.Data.length;
                             break;
 
                         case 60:
-                            curData.season = sum / res.data.Data.length;
-                            setSelectedCropData(curData);
+                            curData.season.price = priceSum / res.data.Data.length;
+                            curData.season.quantity = quantitySum / res.data.Data.length;
                             break;
 
                         default:
                             break;
                     }
+                    setSelectedCropData(curData);
                 })
                 .catch((err) => {
                     throw new Error(err);
@@ -165,10 +180,10 @@ function Home() {
     return (
         <div className="max-w-[1400px] mx-auto overflow-y-scroll">
             <Header setMarketName={setMarketName} marketName={marketName} />
-            <Modal crop={selectedCrop} prices={selectedCropData} />
+            <Modal crop={selectedCrop} selectedCropData={selectedCropData} />
             <div className="mx-6">
                 <Stat stats={stats} />
-                <Slide priceVariationList={priceVariationList} setSelectedCrop={setSelectedCrop} />
+                <Slide priceVariations={priceVariations} setSelectedCrop={setSelectedCrop} />
                 <Rank crops={crops} setSelectedCrop={setSelectedCrop} />
             </div>
             <Footer />
