@@ -53,7 +53,7 @@ function Modal({ crop, selectedCropData }: ModalProps) {
 
                         </div>
 
-                        <div className="stats shadow-lg hidden lg:block">
+                        <div className="stats shadow-lg hidden md:block lg:block">
                             <div className="stat text-md place-items-center">
                                 <div className="stat-title">交易總額</div>
                                 <div className="stat-value my-1 text-xl">
@@ -75,7 +75,7 @@ function Modal({ crop, selectedCropData }: ModalProps) {
                             </div>
                         </div>
 
-                        <div className="stats shadow-lg hidden lg:block">
+                        <div className="stats shadow-lg hidden md:block lg:block">
                             <div className="stat text-md place-items-center">
                                 <div className="stat-title">中價</div>
                                 <div className="stat-value my-1 text-xl">{formatter.format(Number(crop?.Middle_Price))}</div>
