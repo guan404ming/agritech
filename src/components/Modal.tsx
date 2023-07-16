@@ -1,9 +1,101 @@
-import React from 'react';
-import { ModalProps, formatter } from '../type';
+import React, { useContext, useEffect, useState } from 'react';
+import axios from 'axios';
+import {
+    Crop, SelectedCropData, formatter,
+} from '../type';
+import { MarketContext } from '../useContext';
+import handleFormatDate from '../util/time';
 
-function Modal({ crop, selectedCropData }: ModalProps) {
-    const income: number = Number(crop?.Avg_Price) * Number(crop?.Trans_Quantity);
-    const quantity: number = Number(crop?.Trans_Quantity);
+function Modal() {
+    const { selectedCrop, marketName, curDate } = useContext(MarketContext);
+    const [selectedCropData, setSelectedCropData] = useState<SelectedCropData>({
+        week: {
+            price: 0,
+            quantity: 0,
+        },
+        month: {
+            price: 0,
+            quantity: 0,
+        },
+        season: {
+            price: 0,
+            quantity: 0,
+        },
+    });
+
+    const income: number = Number(selectedCrop?.Avg_Price) * Number(selectedCrop?.Trans_Quantity);
+    const quantity: number = Number(selectedCrop?.Trans_Quantity);
+
+    const handleFetchCropData = async (end: Date, crop: Crop | undefined) => {
+        const durations = [7, 30, 60];
+        const curData = { ...selectedCropData };
+
+        try {
+            await Promise.all(
+                durations.map(async (duration) => {
+                    const pre = new Date();
+                    pre.setDate(end.getDate() - duration);
+
+                    const res = await axios.get('https://data.coa.gov.tw/api/v1/AgriProductsTransType/', {
+                        params: {
+                            Start_time: handleFormatDate(pre),
+                            End_time: handleFormatDate(end),
+                            CropCode: crop?.CropCode,
+                            MarketName: marketName,
+                        },
+                    });
+
+                    let priceSum = 0;
+                    let quantitySum = 0;
+
+                    res.data.Data.forEach((data: Crop) => {
+                        priceSum += data.Avg_Price;
+                        quantitySum += data.Trans_Quantity;
+                    });
+
+                    switch (duration) {
+                        case 7:
+                            curData.week = {
+                                price: priceSum / res.data.Data.length,
+                                quantity: quantitySum / res.data.Data.length,
+                            };
+                            break;
+
+                        case 30:
+                            curData.month = {
+                                price: priceSum / res.data.Data.length,
+                                quantity: quantitySum / res.data.Data.length,
+                            };
+                            break;
+
+                        case 60:
+                            curData.season = {
+                                price: priceSum / res.data.Data.length,
+                                quantity: quantitySum / res.data.Data.length,
+                            };
+                            break;
+
+                        default:
+                            break;
+                    }
+                }),
+            );
+
+            setSelectedCropData(curData);
+        } catch (err) {
+            throw new Error(String(err));
+        }
+    };
+
+    useEffect(() => {
+        (
+            async () => {
+                if (selectedCrop !== undefined) {
+                    await handleFetchCropData(curDate, selectedCrop);
+                }
+            }
+        )();
+    }, [selectedCrop]);
 
     return (
         <>
@@ -24,9 +116,9 @@ function Modal({ crop, selectedCropData }: ModalProps) {
                     <label className="btn btn-sm btn-ghost absolute right-2 top-2">✕</label>
 
                     <div className="space-x-3 mb-2 md:mb-3 text-center">
-                        <span className="font-bold text-lg">{crop?.CropName}</span>
-                        <div className="badge badge-primary">{crop?.CropCode}</div>
-                        <div className="badge badge-secondary">{crop?.MarketName}</div>
+                        <span className="font-bold text-lg">{selectedCrop?.CropName}</span>
+                        <div className="badge badge-primary">{selectedCrop?.CropCode}</div>
+                        <div className="badge badge-secondary">{selectedCrop?.MarketName}</div>
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-3 mx-6 gap-2 mb-2">
@@ -47,7 +139,7 @@ function Modal({ crop, selectedCropData }: ModalProps) {
                         <div className="stats shadow-lg">
                             <div className="stat text-md place-items-center">
                                 <div className="stat-title">平均價格</div>
-                                <div className="stat-value my-1 text-xl">{formatter.format(Number(crop?.Avg_Price))}</div>
+                                <div className="stat-value my-1 text-xl">{formatter.format(Number(selectedCrop?.Avg_Price))}</div>
                                 <div className="stat-desc">元 / 公斤</div>
                             </div>
 
@@ -66,30 +158,21 @@ function Modal({ crop, selectedCropData }: ModalProps) {
                         </div>
 
                     </div>
+
                     <div className="grid grid-cols-2 md:grid-cols-3 mx-6 gap-2">
-                        <div className="stats shadow-lg">
-                            <div className="stat text-md place-items-center">
-                                <div className="stat-title">上價</div>
-                                <div className="stat-value my-1 text-xl">{formatter.format(Number(crop?.Upper_Price))}</div>
-                                <div className="stat-desc">元 / 公斤</div>
+                        {[
+                            { title: '上價', price: selectedCrop?.Upper_Price },
+                            { title: '中價', price: selectedCrop?.Middle_Price },
+                            { title: '下價', price: selectedCrop?.Lower_Price },
+                        ].map((item) => (
+                            <div className="stats shadow-lg" key={item.title}>
+                                <div className="stat text-md place-items-center">
+                                    <div className="stat-title">{item.title}</div>
+                                    <div className="stat-value my-1 text-xl">{formatter.format(Number(item.price))}</div>
+                                    <div className="stat-desc">元 / 公斤</div>
+                                </div>
                             </div>
-                        </div>
-
-                        <div className="stats shadow-lg hidden md:block lg:block">
-                            <div className="stat text-md place-items-center">
-                                <div className="stat-title">中價</div>
-                                <div className="stat-value my-1 text-xl">{formatter.format(Number(crop?.Middle_Price))}</div>
-                                <div className="stat-desc">元 / 公斤</div>
-                            </div>
-                        </div>
-
-                        <div className="stats shadow-lg">
-                            <div className="stat text-md place-items-center">
-                                <div className="stat-title">下價</div>
-                                <div className="stat-value my-1 text-xl">{formatter.format(Number(crop?.Lower_Price))}</div>
-                                <div className="stat-desc">元 / 公斤</div>
-                            </div>
-                        </div>
+                        ))}
                     </div>
 
                     <div className="overflow-x-auto m-6">
@@ -102,26 +185,18 @@ function Modal({ crop, selectedCropData }: ModalProps) {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr className="" key={Math.random().toString(16).slice(2)}>
-                                    <td>今日</td>
-                                    <td className="text-center">{formatter.format(Number(crop?.Trans_Quantity) / 1000)}</td>
-                                    <td className="text-center">{formatter.format(Number(crop?.Avg_Price))}</td>
-                                </tr>
-                                <tr className="" key={Math.random().toString(16).slice(2)}>
-                                    <td>週平均</td>
-                                    <td className="text-center">{formatter.format(Number(selectedCropData?.week.quantity) / 1000)}</td>
-                                    <td className="text-center">{formatter.format(Number(selectedCropData?.week.price))}</td>
-                                </tr>
-                                <tr className="" key={Math.random().toString(16).slice(2)}>
-                                    <td>月平均</td>
-                                    <td className="text-center">{formatter.format(Number(selectedCropData?.month.quantity) / 1000)}</td>
-                                    <td className="text-center">{formatter.format(Number(selectedCropData?.month.price))}</td>
-                                </tr>
-                                <tr className="" key={Math.random().toString(16).slice(2)}>
-                                    <td>季平均</td>
-                                    <td className="text-center">{formatter.format(Number(selectedCropData?.season.quantity) / 1000)}</td>
-                                    <td className="text-center">{formatter.format(Number(selectedCropData?.season.price))}</td>
-                                </tr>
+                                {[
+                                    { label: '今日', quantity: selectedCrop?.Trans_Quantity, price: selectedCrop?.Avg_Price },
+                                    { label: '週平均', quantity: selectedCropData?.week.quantity, price: selectedCropData?.week.price },
+                                    { label: '月平均', quantity: selectedCropData?.month.quantity, price: selectedCropData?.month.price },
+                                    { label: '季平均', quantity: selectedCropData?.season.quantity, price: selectedCropData?.season.price },
+                                ].map((item) => (
+                                    <tr className="" key={Math.random().toString(16).slice(2)}>
+                                        <td>{item.label}</td>
+                                        <td className="text-center">{formatter.format(Number(item.quantity) / 1000)}</td>
+                                        <td className="text-center">{formatter.format(Number(item.price))}</td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>

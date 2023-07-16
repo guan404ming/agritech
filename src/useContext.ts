@@ -1,11 +1,22 @@
 import { createContext } from 'react';
-import { ThemeContextInterface } from './type';
+import { MarketContextInterface, ThemeContextInterface } from './type';
 
 const ThemeContext = createContext<ThemeContextInterface>(
     {
-        theme: 'light',
-        setTheme: () => {},
+        theme: '',
+        setTheme: () => { },
     },
 );
 
-export default ThemeContext;
+const MarketContext = createContext<MarketContextInterface>(
+    {
+        marketName: '',
+        setMarketName: () => { },
+        selectedCrop: undefined,
+        setSelectedCrop: () => { },
+        curDate: new Date(),
+        prevDate: new Date(),
+    },
+);
+
+export { ThemeContext, MarketContext };

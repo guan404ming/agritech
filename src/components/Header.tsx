@@ -1,14 +1,15 @@
 import React, { useContext } from 'react';
-import { HeaderProps } from '../type';
-import ThemeContext from '../useContext';
+import { MarketContext, ThemeContext } from '../useContext';
 
 const markets: string[] = [
     '台北二', '台北一', '板橋區', '三重區', '宜蘭市', '桃農', '台中市', '豐原區', '永靖鄉',
     '溪湖鎮', '南投市', '西螺鎮', '高雄市', '鳳山區', '屏東市', '台東市', '花蓮市',
 ];
 
-function Header({ setMarketName, marketName }: HeaderProps) {
+function Header() {
     const { setTheme } = useContext(ThemeContext);
+    const { marketName, setMarketName } = useContext(MarketContext);
+
     const handleChangeTheme = (isLight: boolean) => {
         if (!isLight) {
             setTheme('dark');
@@ -37,8 +38,11 @@ function Header({ setMarketName, marketName }: HeaderProps) {
                     <ul className="dropdown-content menu p-2 shadow-lg bg-base-100 rounded-box w-44 grid grid-cols-2">
                         {
                             markets.map((market) => (
-                                <li key={Math.random().toString(16).slice(2)}>
-                                    <button type="button" onClick={() => setMarketName(market)} className="truncate">{market}</button>
+                                <li
+                                    key={market}
+                                    onClick={() => setMarketName(market)}
+                                >
+                                    <button type="button" className="truncate" onClick={() => setMarketName(market)}>{market}</button>
                                 </li>
                             ))
                         }

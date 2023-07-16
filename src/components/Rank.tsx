@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Crop, RankProps } from '../type';
+import { MarketContext } from '../useContext';
 
-function Rank({ crops, setSelectedCrop }: RankProps) {
+function Rank({ crops }: RankProps) {
+    const { setSelectedCrop } = useContext(MarketContext);
     const [page, setPage] = useState(1);
     const [filter, setFilter] = useState('all');
     const [filteredCrops, setFilteredCrop] = useState<Crop[]>(crops);

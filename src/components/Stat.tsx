@@ -1,7 +1,22 @@
-import React from 'react';
-import { StatProps, formatter } from '../type';
+import React, { useEffect, useState } from 'react';
+import {
+    StatProps, formatter, Stats,
+} from '../type';
 
-function Stats({ stats }: StatProps) {
+function Stat({ crops }: StatProps) {
+    const [stats, setStats] = useState<Stats>({ income: 0, quantity: 0 });
+
+    useEffect(() => {
+        let income = 0;
+        let quantity = 0;
+
+        crops.forEach((crop) => {
+            income += (Number(crop.Avg_Price) * crop.Trans_Quantity);
+            quantity += crop.Trans_Quantity;
+        });
+        setStats({ income, quantity });
+    }, [crops]);
+
     return (
         <div className="stats shadow-md w-full">
             <div className="stat text-md place-items-center">
@@ -25,4 +40,4 @@ function Stats({ stats }: StatProps) {
     );
 }
 
-export default Stats;
+export default Stat;

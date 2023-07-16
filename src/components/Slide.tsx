@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { SlideProps } from '../type';
+import { MarketContext } from '../useContext';
 
-function Slide({ priceVariations, setSelectedCrop }: SlideProps) {
+function Slide({ priceVariations }: SlideProps) {
+    const { setSelectedCrop } = useContext(MarketContext);
+
     return (
         <>
             <h1 className="font-bold text-lg my-6">今日漲跌最大</h1>
