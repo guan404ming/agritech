@@ -1,16 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Crop, RankProps } from '../type';
-import { MarketContext } from '../useContext';
+import { Crop, RankProps } from '../types/type';
+import { MarketContext } from './useContext';
 
 function Rank({ crops }: RankProps) {
     const { setSelectedCrop } = useContext(MarketContext);
     const [page, setPage] = useState(1);
     const [filter, setFilter] = useState('all');
     const [filteredCrops, setFilteredCrop] = useState<Crop[]>(crops);
-
-    const handleChangeFilter = (e: string) => {
-        setFilter(e);
-    };
 
     const handleFilterCrops = () => {
         switch (filter) {
@@ -47,7 +43,7 @@ function Rank({ crops }: RankProps) {
                 <h1 className="font-bold text-lg my-6">今日菜價</h1>
                 <select
                     className="select max-w-xs"
-                    onChange={(e) => handleChangeFilter(e.target.value)}
+                    onChange={(e) => setFilter(e.target.value)}
                 >
                     <option disabled>請選擇類別</option>
                     <option value="all">全部</option>

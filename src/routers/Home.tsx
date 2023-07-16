@@ -4,9 +4,9 @@ import Stat from '../components/Stat';
 import Rank from '../components/Rank';
 import Slide from '../components/Slide';
 import Modal from '../components/Modal';
-import axios from '../api';
-import { Crop, PriceVariation } from '../type';
-import { MarketContext } from '../useContext';
+import axios from '../util/api';
+import { Crop, PriceVariation } from '../types/type';
+import { MarketContext } from '../components/useContext';
 import handleFormatDate from '../util/time';
 
 function Home() {
@@ -62,10 +62,13 @@ function Home() {
             async () => {
                 await handleFetchData(1, curDate, curDate, true);
                 handleFetchData(1, prevDate, prevDate, false);
-                handleCompareData();
             }
         )();
     }, [marketName]);
+
+    useEffect(() => {
+        handleCompareData();
+    }, [prevCrops]);
 
     return (
         <div className="max-w-[1400px] mx-auto overflow-y-scroll">

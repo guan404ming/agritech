@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { MarketContext, ThemeContext } from '../useContext';
+import { MarketContext, ThemeContext } from './useContext';
 
 const markets: string[] = [
     '台北二', '台北一', '板橋區', '三重區', '宜蘭市', '桃農', '台中市', '豐原區', '永靖鄉',
@@ -35,7 +35,7 @@ function Header() {
                 </label>
                 <div className="dropdown dropdown-hover dropdown-end">
                     <button className="btn btn-ghost font-bold" type="button">{marketName}</button>
-                    <ul className="dropdown-content menu p-2 shadow-lg bg-base-100 rounded-box w-44 grid grid-cols-2">
+                    <ul className="dropdown-content menu p-2 shadow-lg bg-base-100 rounded-box w-44 grid grid-cols-2 z-50">
                         {
                             markets.map((market) => (
                                 <li

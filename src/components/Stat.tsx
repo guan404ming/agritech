@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
     StatProps, formatter, Stats,
-} from '../type';
+} from '../types/type';
 
 function Stat({ crops }: StatProps) {
     const [stats, setStats] = useState<Stats>({ income: 0, quantity: 0 });

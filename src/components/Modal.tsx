@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import {
     Crop, SelectedCropData, formatter,
-} from '../type';
-import { MarketContext } from '../useContext';
+} from '../types/type';
+import { MarketContext } from './useContext';
 import handleFormatDate from '../util/time';
 
 function Modal() {
@@ -22,6 +22,7 @@ function Modal() {
             quantity: 0,
         },
     });
+    const [loading, setLoading] = useState<boolean>(false);
 
     const income: number = Number(selectedCrop?.Avg_Price) * Number(selectedCrop?.Trans_Quantity);
     const quantity: number = Number(selectedCrop?.Trans_Quantity);
@@ -31,6 +32,7 @@ function Modal() {
         const curData = { ...selectedCropData };
 
         try {
+            setLoading(true);
             await Promise.all(
                 durations.map(async (duration) => {
                     const pre = new Date();
@@ -93,6 +95,7 @@ function Modal() {
                 if (selectedCrop !== undefined) {
                     await handleFetchCropData(curDate, selectedCrop);
                 }
+                setLoading(false);
             }
         )();
     }, [selectedCrop]);
@@ -193,8 +196,20 @@ function Modal() {
                                 ].map((item) => (
                                     <tr className="" key={Math.random().toString(16).slice(2)}>
                                         <td>{item.label}</td>
-                                        <td className="text-center">{formatter.format(Number(item.quantity) / 1000)}</td>
-                                        <td className="text-center">{formatter.format(Number(item.price))}</td>
+                                        <td className="text-center">
+                                            {
+                                                (!loading)
+                                                    ? formatter.format(Number(item.quantity) / 1000)
+                                                    : <span className="loading loading-spinner loading-md" />
+                                            }
+                                        </td>
+                                        <td className="text-center">
+                                            {
+                                                (!loading)
+                                                    ? formatter.format(Number(item.price))
+                                                    : <span className="loading loading-spinner loading-md" />
+                                            }
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>

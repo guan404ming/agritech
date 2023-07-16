@@ -1,11 +1,11 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
 import React, { useMemo, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './routers/Home';
-import Search from './routers/Search';
-import Footer from './components/Footer';
-import { ThemeContext, MarketContext } from './useContext';
-import { Crop } from './type';
+import Home from './Home';
+import Search from './Search';
+import Footer from '../components/Footer';
+import { ThemeContext, MarketContext } from '../components/useContext';
+import { Crop } from '../types/type';
 
 function App() {
     // theme

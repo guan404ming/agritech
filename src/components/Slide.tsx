@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { SlideProps } from '../type';
-import { MarketContext } from '../useContext';
+import { SlideProps } from '../types/type';
+import { MarketContext } from './useContext';
 
 function Slide({ priceVariations }: SlideProps) {
     const { setSelectedCrop } = useContext(MarketContext);

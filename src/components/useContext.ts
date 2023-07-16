@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { MarketContextInterface, ThemeContextInterface } from './type';
+import { MarketContextInterface, ThemeContextInterface } from '../types/type';
 
 const ThemeContext = createContext<ThemeContextInterface>(
     {
