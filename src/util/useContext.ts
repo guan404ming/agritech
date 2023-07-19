@@ -14,8 +14,6 @@ const MarketContext = createContext<MarketContextInterface>(
         setMarketName: () => { },
         selectedCrop: undefined,
         setSelectedCrop: () => { },
-        curDate: new Date(),
-        prevDate: new Date(),
     },
 );
 

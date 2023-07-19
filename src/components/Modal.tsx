@@ -3,11 +3,11 @@ import axios from 'axios';
 import {
     Crop, SelectedCropData, formatter,
 } from '../types/type';
-import { MarketContext } from './useContext';
-import handleFormatDate from '../util/time';
+import { MarketContext } from '../util/useContext';
+import { handleFormatDate, curDate } from '../util/time';
 
 function Modal() {
-    const { selectedCrop, marketName, curDate } = useContext(MarketContext);
+    const { selectedCrop, marketName } = useContext(MarketContext);
     const [selectedCropData, setSelectedCropData] = useState<SelectedCropData>({
         week: {
             price: 0,

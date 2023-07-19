@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Crop, RankProps } from '../types/type';
-import { MarketContext } from './useContext';
+import { MarketContext } from '../util/useContext';
 
 function Rank({ crops }: RankProps) {
     const { setSelectedCrop } = useContext(MarketContext);

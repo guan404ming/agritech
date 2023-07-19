@@ -4,10 +4,6 @@ export interface RankProps {
     crops: Crop[];
 }
 
-export interface SlideProps {
-    priceVariations: PriceVariation[];
-}
-
 export interface StatProps {
     crops: Crop[];
 }
@@ -50,8 +46,6 @@ export interface MarketContextInterface {
     setMarketName: React.Dispatch<React.SetStateAction<string>>;
     selectedCrop: Crop | undefined;
     setSelectedCrop: React.Dispatch<React.SetStateAction<Crop | undefined>>;
-    curDate: Date;
-    prevDate: Date;
 }
 
 export interface SelectedCropData {

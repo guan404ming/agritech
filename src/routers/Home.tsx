@@ -1,44 +1,19 @@
-import React, { useState, useEffect, useContext } from 'react';
-import Header from '../components/Header';
+import React, { useState, useEffect } from 'react';
 import Stat from '../components/Stat';
 import Rank from '../components/Rank';
 import Slide from '../components/Slide';
 import Modal from '../components/Modal';
-import axios from '../util/api';
 import { Crop, PriceVariation } from '../types/type';
-import { MarketContext } from '../components/useContext';
-import handleFormatDate from '../util/time';
 
-function Home() {
-    const { marketName, curDate, prevDate } = useContext(MarketContext);
-    const [crops, setCrops] = useState<Crop[]>([]);
-    const [prevCrops, setPrevCrops] = useState<Crop[]>([]);
+interface HomeProps {
+    crops: Crop[];
+    prevCrops: Crop[];
+}
+
+function Home({ crops, prevCrops }: HomeProps) {
     const [priceVariations, setPriceVariations] = useState<PriceVariation[]>([]);
 
     // Data
-    const handleFetchData = async (page: number, start: Date, end: Date, isCur: boolean) => {
-        await axios
-            .get('https://data.coa.gov.tw/api/v1/AgriProductsTransType/', {
-                params: {
-                    Start_time: handleFormatDate(start),
-                    End_time: handleFormatDate(end),
-                    MarketName: marketName,
-                    Page: page,
-                    api_key: process.env.REACT_APP_API_KEY,
-                },
-            })
-            .then((res) => {
-                if (isCur) {
-                    setCrops(res.data.Data);
-                } else {
-                    setPrevCrops(res.data.Data);
-                }
-            })
-            .catch((err) => {
-                throw new Error(err);
-            });
-    };
-
     const handleCompareData = () => {
         const curPriceVariationList: PriceVariation[] = [];
         crops.forEach((crop) => {
@@ -58,27 +33,27 @@ function Home() {
     };
 
     useEffect(() => {
-        (
-            async () => {
-                await handleFetchData(1, curDate, curDate, true);
-                handleFetchData(1, prevDate, prevDate, false);
-            }
-        )();
-    }, [marketName]);
-
-    useEffect(() => {
         handleCompareData();
     }, [prevCrops]);
 
     return (
-        <div className="max-w-[1400px] mx-auto overflow-y-scroll">
-            <Header />
+        <div className="mx-auto overflow-y-scroll">
             <Modal />
-            <div className="mx-6">
-                <Stat crops={crops} />
-                <Slide priceVariations={priceVariations} />
-                <Rank crops={crops} />
-            </div>
+            {
+                (crops.length !== 0)
+                    ? (
+                        <div className="mx-8">
+                            <Stat crops={crops} />
+                            <Slide title="今日漲跌最大" priceVariations={priceVariations} />
+                            <Rank crops={crops} />
+                        </div>
+                    )
+                    : (
+                        <div className="w-[100vw] h-[100vh]">
+                            <span className="loading loading-spinner loading-lg mx-[48%] mt-[20%]" />
+                        </div>
+                    )
+            }
         </div>
     );
 }

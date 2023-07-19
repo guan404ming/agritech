@@ -6,4 +6,9 @@ const handleFormatDate = (date: Date) => (
     ].join('.')
 );
 
-export default handleFormatDate;
+const curDate = new Date();
+
+const prevDate = new Date();
+prevDate.setDate(curDate.getDate() - 1);
+
+export { handleFormatDate, curDate, prevDate };
